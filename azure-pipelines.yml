@@ -20,25 +20,7 @@ steps:
     custom: 'tool'
     arguments: 'install -g NuGetKeyVaultSignTool'
 
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'pack'
-    packagesToPack: '**/*.csproj'
-    versioningScheme: off
-    majorVersion: '1'
-    minorVersion: '0'
-    patchVersion: '$([System.DateTime]::Now.ToString(`yyyyMMdd`)).$([System.DateTime]::Now.ToString(`HHmm`))'
 
 - task: CmdLine@2
   inputs:
     script: 'echo %PATH%'
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg'
-    nuGetFeedType: 'external'
-    publishFeedCredentials: 'Nuget.org'
