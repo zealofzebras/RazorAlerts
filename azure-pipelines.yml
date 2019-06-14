@@ -30,7 +30,7 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: '$certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new([System.Convert]::FromBase64String($env:Code-Certificate));
+    script: '$certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new([System.Convert]::FromBase64String($env:CodeCertificate));
       Get-ChildItem "./" -R -Filter *.nupkg | ForEach-Object { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $certificate; }'
   env:
-    Code-Certificate: $(Codesign2018)
+    CodeCertificate: $(Codesign2018)
