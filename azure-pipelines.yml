@@ -37,9 +37,14 @@ steps:
   inputs:
     failOnStderr: true
     targetType: 'inline'
-    script: 'Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R -Filter *.nupkg | ForEach-Object {  
-      Write-Host $_.FullName
-      $output = (& "$HOME/.dotnet/tools/NuGetKeyVaultSignTool.exe" sign "$_.FullName" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$Env:VaultUrl" --azure-key-vault-client-id "$Env:VaultId" --azure-key-vault-client-secret "$Env:VaultSecret" --azure-key-vault-certificate "$Env:VaultCertname" 2>&1 | %{ "$_" }); Write-Host $output }'
+    script: 'Write-Host  "$Env:VaultUrl" 
+Write-Host  "$Env:VaultCertname" 
+Write-Host  "$Env:VaultId" 
+Write-Host  "$Env:VaultSecret" 
+Get-ChildItem "$(Build.ArtifactStagingDirectory)" -R -Filter *.nupkg | ForEach-Object {  
+    Write-Host $_.FullName
+    (& "$HOME/.dotnet/tools/NuGetKeyVaultSignTool.exe" sign "$_.FullName" --force --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$Env:VaultUrl" --azure-key-vault-client-id "$Env:VaultId" --azure-key-vault-client-secret "$Env:VaultSecret" --azure-key-vault-certificate "$Env:VaultCertname" 2>&1 | %{ Write-Host "$_" }); 
+ }'
   env:
     VaultCertname: $(VaultCertname)
     VaultId: $(VaultId)
