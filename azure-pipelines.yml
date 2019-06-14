@@ -21,10 +21,10 @@ steps:
   inputs:
     command: 'pack'
     packagesToPack: '**/*.csproj'
-    versioningScheme: 'byPrereleaseNumber'
+    versioningScheme: off
     majorVersion: '1'
     minorVersion: '0'
-    patchVersion: '0'
+    patchVersion: '$([System.DateTime]::Now.ToString(`yyyyMMdd`)).$([System.DateTime]::Now.ToString(`HHmm`))'
 
 
 - task: NuGetCommand@2
