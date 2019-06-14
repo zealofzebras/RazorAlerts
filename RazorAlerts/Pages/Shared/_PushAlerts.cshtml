@@ -1,0 +1,17 @@
+﻿@using RazorAlerts
+
+@if (TempData.ContainsKey(RazorAlerts.AlertExtensions.AlertKey) && TempData[RazorAlerts.AlertExtensions.AlertKey] is List<RazorAlerts.Alert> alertList && alertList.Any())
+{
+    <script>
+        @foreach (var alert in alertList.Where(a => !a.Shown))
+        {
+            alert.Shown = true;
+            var alertHtml = await Html.PartialAsync("_Alert", alert);
+            var alertString = alertHtml.GetHtmlString();
+            var alertJavascriptString = System.Web.HttpUtility.JavaScriptStringEncode(alertString);
+            <text>
+            $(".alert-container").append("@Html.Raw(alertJavascriptString)");
+            </text>
+        }
+    </script>
+}

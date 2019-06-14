@@ -1,0 +1,10 @@
+﻿<div class="alert-container">
+    @if (TempData.ContainsKey(RazorAlerts.AlertExtensions.AlertKey) && TempData[RazorAlerts.AlertExtensions.AlertKey] is List<RazorAlerts.Alert> alertList && alertList.Any())
+    {
+        @foreach (var alert in alertList.Where(a => !a.Shown))
+        {
+            alert.Shown = true;
+            await Html.RenderPartialAsync("_Alert", alert);
+        }
+    }
+</div>
