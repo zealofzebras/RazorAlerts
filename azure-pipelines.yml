@@ -26,11 +26,21 @@ steps:
     majorVersion: '1'
     minorVersion: '0'
     patchVersion: '$([System.DateTime]::Now.ToString(`yyyyMMdd`)).$([System.DateTime]::Now.ToString(`HHmm`))'
-    
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'custom'
+    custom: 'tool'
+    arguments: 'install -g NuGetKeyVaultSignTool'
+
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: '$certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new([System.Convert]::FromBase64String($env:CodeCertificate));
-      Get-ChildItem "./" -R -Filter *.nupkg | ForEach-Object { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $certificate; }'
+    script: 'Get-ChildItem "./" -R -Filter *.nupkg | ForEach-Object { 
+   &  "$HOME/.dotnet/tools/NuGetKeyVaultSignTool.exe" sign "$_.FullName" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$Env:VaultUrl" --azure-key-vault-client-id "$Env:VaultId" --azure-key-vault-client-secret "$Env:VaultSecret" --azure-key-vault-certificate "$Env:VaultCertificate";
+}'
   env:
-    CodeCertificate: $(Codesign2018)
+    VaultCertificate: $(VaultCertificate)
+    VaultId: $(VaultId)
+    VaultSecret: $(VaultSecret)
+    VaultUrl: $(VaultUrl)
