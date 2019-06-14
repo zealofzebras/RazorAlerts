@@ -21,13 +21,10 @@ steps:
     arguments: 'install -g NuGetKeyVaultSignTool'
 
 
-- task: Bash@3
+- task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: 'for f in $(find ./ -name ''*.nupkg''); do echo ~/.dotnet/tools/NuGetKeyVaultSignTool.exe sign "$f" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$EVAULTURL" --azure-key-vault-client-id "$EVAULTID" --azure-key-vault-client-secret "$EVAULTSECRET" --azure-key-vault-certificate "$VAULTCERTNAME"; done'
-  displayName: NuGetKeyVaultSignTool
+    script: '$certificate = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new([System.Convert]::FromBase64String($(Code-Certificate)));
+      Get-ChildItem "./" -R -Filter *.nupkg | ForEach-Object { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $certificate; }'
   env:
-    EVAULTID: $(VaultId)
-    EVAULTSECRET: $(VaultSecret)
-    EVAULTURL: $(VaultUrl)
-    EVAULTCERTNAME: $(VaultCertname)
+    Code-Certificate: $(Codesign2018)
