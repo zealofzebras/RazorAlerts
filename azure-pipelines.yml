@@ -44,7 +44,11 @@ steps:
     VaultSecret: $(VaultSecret)
     VaultUrl: $(VaultUrl)
 
-
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '**/*.nupkg'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
 
 - task: NuGetCommand@2
   inputs:
