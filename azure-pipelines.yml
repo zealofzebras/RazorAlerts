@@ -24,9 +24,7 @@ steps:
 - task: Bash@3
   inputs:
     targetType: 'inline'
-    script: 'for f in $(find ./ -name ''*.nupkg''); do 
-      echo ~/.dotnet/tools/NuGetKeyVaultSignTool.exe sign "$f" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$EVAULTURL" --azure-key-vault-client-id "$EVAULTID" --azure-key-vault-client-secret "$EVAULTSECRET" --azure-key-vault-certificate "$VAULTCERTNAME"
-      done'
+    script: 'for f in $(find ./ -name ''*.nupkg''); do echo ~/.dotnet/tools/NuGetKeyVaultSignTool.exe sign "$f" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$EVAULTURL" --azure-key-vault-client-id "$EVAULTID" --azure-key-vault-client-secret "$EVAULTSECRET" --azure-key-vault-certificate "$VAULTCERTNAME"; done'
   displayName: NuGetKeyVaultSignTool
   env:
     EVAULTID: $(VaultId)
