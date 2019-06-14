@@ -44,6 +44,8 @@ steps:
     VaultSecret: $(VaultSecret)
     VaultUrl: $(VaultUrl)
 
+
+
 - task: NuGetCommand@2
   inputs:
     command: 'push'
