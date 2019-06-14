@@ -38,8 +38,7 @@ steps:
     failOnStderr: true
     targetType: 'inline'
     script: 'Get-ChildItem "./" -R -Filter *.nupkg | ForEach-Object { 
-    Invoke-Expression ''& "$HOME/.dotnet/tools/NuGetKeyVaultSignTool.exe" sign "$_.FullName" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$Env:VaultUrl" --azure-key-vault-client-id "$Env:VaultId" --azure-key-vault-client-secret "$Env:VaultSecret" --azure-key-vault-certificate "$Env:VaultCertificate"'' -ErrorVariable badoutput;     
-    Write-Host "##vso[task.logissue type=error;]$badoutput"
+    & "$HOME/.dotnet/tools/NuGetKeyVaultSignTool.exe" sign "$_.FullName" --file-digest sha256 --timestamp-rfc3161 http://timestamp.digicert.com --timestamp-digest sha256 --azure-key-vault-url "$Env:VaultUrl" --azure-key-vault-client-id "$Env:VaultId" --azure-key-vault-client-secret "$Env:VaultSecret" --azure-key-vault-certificate "$Env:VaultCertificate";
     }'
   env:
     VaultCertname: $(VaultCertname)
