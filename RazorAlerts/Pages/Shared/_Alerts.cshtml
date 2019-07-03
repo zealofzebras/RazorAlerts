@@ -1,10 +1,11 @@
 ﻿<div class="alert-container">
-    @if (TempData.ContainsKey(RazorAlerts.AlertExtensions.AlertKey) && TempData[RazorAlerts.AlertExtensions.AlertKey] is List<RazorAlerts.Alert> alertList && alertList.Any())
+    @if (TempData.ContainsKey(RazorAlerts.AlertExtensions.AlertKey) && TempData[RazorAlerts.AlertExtensions.AlertKey] is List<string> alertList && alertList.Any())
     {
-        @foreach (var alert in alertList.Where(a => !a.Shown))
+        @foreach (var alert in alertList.ToArray())
         {
-            alert.Shown = true;
-            await Html.RenderPartialAsync("_Alert", alert);
+            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<RazorAlerts.Alert>(alert);
+            alertList.Remove(alert);
+            await Html.RenderPartialAsync("_Alert", obj);
         }
     }
 </div>

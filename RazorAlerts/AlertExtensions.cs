@@ -10,15 +10,15 @@ namespace RazorAlerts
     {
         public static string AlertKey = "Alerts";
 
-        public static List<Alert> GetAlertList(this Controller controller)
+        public static List<string> GetAlertList(this Controller controller)
         {
-            if (controller.TempData.ContainsKey(AlertKey) && controller.TempData[AlertKey] is List<Alert> list)
+            if (controller.TempData.ContainsKey(AlertKey) && controller.TempData[AlertKey] is List<string> list)
             {
                 return list;
             }
             else
             {
-                list = new List<Alert>();
+                list = new List<string>();
                 controller.TempData[AlertKey] = list;
                 return list;
             }
@@ -53,7 +53,7 @@ namespace RazorAlerts
         public static void AddAlert(this Controller controller, Alert alert)
         {
             var list = controller.GetAlertList();
-            list.Add(alert);
+            list.Add(Newtonsoft.Json.JsonConvert.SerializeObject(alert));
            
         }
 
