@@ -1,13 +1,13 @@
 ﻿@using RazorAlerts
 
-@if (TempData.ContainsKey(RazorAlerts.AlertExtensions.AlertKey) && TempData[RazorAlerts.AlertExtensions.AlertKey] is List<string> alertList && alertList.Any())
+@if (TempData.TryGetAlertList(out var alertList) && alertList.Any())
 {
     <script>
-    @foreach (var alert in alertList.ToArray())
+    @foreach (var alert in alertList.Where(a => !a.Shown ))
     {
-            var obj = Newtonsoft.Json.JsonConvert.DeserializeObject<RazorAlerts.Alert>(alert);
-            alertList.Remove(alert);
-            var alertHtml = await Html.PartialAsync("_Alert", obj);
+        alert.Shown = true;
+
+          var alertHtml = await Html.PartialAsync("_Alert", alert);
             var alertString = alertHtml.GetHtmlString();
             var alertJavascriptString = System.Web.HttpUtility.JavaScriptStringEncode(alertString);
             <text>
@@ -15,4 +15,5 @@
             </text>
         }
     </script>
+    TempData.SaveAlertList(alertList);
 }

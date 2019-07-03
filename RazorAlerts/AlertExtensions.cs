@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using RazorAlerts.Extensions.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,18 +12,35 @@ namespace RazorAlerts
     {
         public static string AlertKey = "Alerts";
 
-        public static List<string> GetAlertList(this Controller controller)
+        public static List<Alert> GetAlertList(this Controller controller)
         {
-            if (controller.TempData.ContainsKey(AlertKey) && controller.TempData[AlertKey] is List<string> list)
-            {
+            return controller.TempData.GetAlertList();
+        }
+
+        public static bool TryGetAlertList(this ITempDataDictionary tempdata, out List<Alert> alerts )
+        {
+            alerts = null;
+
+            return (tempdata.ContainsKey(AlertKey) &&
+                tempdata[AlertKey] is string listString &&
+                listString.TryParseJson(out alerts)) ;
+        }
+
+        public static List<Alert> GetAlertList(this ITempDataDictionary tempdata)
+        {
+            if (tempdata.TryGetAlertList(out var list))
                 return list;
-            }
             else
-            {
-                list = new List<string>();
-                controller.TempData[AlertKey] = list;
-                return list;
-            }
+                return new List<Alert>();
+        }
+
+        public static void SaveAlertList(this Controller controller, List<Alert> list)
+        {
+            controller.TempData.SaveAlertList(list);
+        }
+        public static void SaveAlertList(this ITempDataDictionary tempdata, List<Alert> list)
+        {
+            tempdata[AlertKey] = Newtonsoft.Json.JsonConvert.SerializeObject(list);
         }
 
 
@@ -53,8 +72,10 @@ namespace RazorAlerts
         public static void AddAlert(this Controller controller, Alert alert)
         {
             var list = controller.GetAlertList();
-            list.Add(Newtonsoft.Json.JsonConvert.SerializeObject(alert));
-           
+            list.Add(alert);
+            controller.SaveAlertList(list);
+
+
         }
 
         public static  string GetHtmlString(this IHtmlContent content)
