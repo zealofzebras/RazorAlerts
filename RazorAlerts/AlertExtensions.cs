@@ -17,13 +17,13 @@ namespace RazorAlerts
             return controller.TempData.GetAlertList();
         }
 
-        public static bool TryGetAlertList(this ITempDataDictionary tempdata, out List<Alert> alerts )
+        public static bool TryGetAlertList(this ITempDataDictionary tempdata, out List<Alert> alerts)
         {
             alerts = null;
 
             return (tempdata.ContainsKey(AlertKey) &&
                 tempdata[AlertKey] is string listString &&
-                listString.TryParseJson(out alerts)) ;
+                listString.TryParseJson(out alerts));
         }
 
         public static List<Alert> GetAlertList(this ITempDataDictionary tempdata)
@@ -66,6 +66,26 @@ namespace RazorAlerts
 
         public static void AddAlert(this Controller controller, AlertTypeEnum alertType, string title, string body, bool dismissable)
         {
+            controller.AddAlert(alertType, new HtmlString(System.Net.WebUtility.HtmlEncode(title)), new HtmlString(System.Net.WebUtility.HtmlEncode(body)), dismissable);
+        }
+
+        public static void AddAlert(this Controller controller, AlertTypeEnum alertType, HtmlString title, HtmlString body)
+        {
+            controller.AddAlert(alertType, title, body, false);
+        }
+
+        public static void AddAlert(this Controller controller, AlertTypeEnum alertType, string title, HtmlString body)
+        {
+            controller.AddAlert(alertType, new HtmlString(System.Net.WebUtility.HtmlEncode(title)), body, false);
+        }
+
+        public static void AddAlert(this Controller controller, AlertTypeEnum alertType, string title, HtmlString body, bool dismissable)
+        {
+            controller.AddAlert(alertType, new HtmlString(System.Net.WebUtility.HtmlEncode(title)), body, dismissable);
+        }
+
+        public static void AddAlert(this Controller controller, AlertTypeEnum alertType, HtmlString title, HtmlString body, bool dismissable)
+        {
             controller.AddAlert(new Alert() { Type = alertType, Title = title, Body = body, Dismissable = dismissable });
         }
 
@@ -78,7 +98,7 @@ namespace RazorAlerts
 
         }
 
-        public static  string GetHtmlString(this IHtmlContent content)
+        public static string GetHtmlString(this IHtmlContent content)
         {
             var writer = new System.IO.StringWriter();
             content.WriteTo(writer, System.Text.Encodings.Web.HtmlEncoder.Default);
