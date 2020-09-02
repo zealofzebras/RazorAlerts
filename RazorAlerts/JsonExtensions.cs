@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using System.Text.Json;
 
 namespace RazorAlerts.Extensions.Json
 {
@@ -9,14 +7,19 @@ namespace RazorAlerts.Extensions.Json
     {
         public static bool TryParseJson<T>(this string @this, out T result)
         {
-            bool success = true;
-            var settings = new JsonSerializerSettings
+            var options = new JsonSerializerOptions
             {
-                Error = (sender, args) => { success = false; args.ErrorContext.Handled = true; },
-                MissingMemberHandling = MissingMemberHandling.Error
+                AllowTrailingCommas = true
             };
-            result = JsonConvert.DeserializeObject<T>(@this, settings);
-            return success;
+            try
+            {
+                result = JsonSerializer.Deserialize<T>(@this, options);
+                return true;
+            } catch (Exception ex)
+            {
+                result = default(T);
+                return false;
+            }
         }
     }
 }

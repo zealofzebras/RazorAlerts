@@ -40,7 +40,7 @@ namespace RazorAlerts
         }
         public static void SaveAlertList(this ITempDataDictionary tempdata, List<Alert> list)
         {
-            tempdata[AlertKey] = Newtonsoft.Json.JsonConvert.SerializeObject(list);
+            tempdata[AlertKey] = System.Text.Json.JsonSerializer.Serialize(list);
         }
 
 
