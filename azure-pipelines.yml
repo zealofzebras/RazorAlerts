@@ -32,7 +32,12 @@ steps:
     command: 'custom'
     custom: 'tool'
     arguments: 'install -g NuGetKeyVaultSignTool --version 3.0.3'
-
+- task: AzureKeyVault@1
+  inputs:
+    azureSubscription: '$(subscription)'
+    KeyVaultName: '$(keyvault)'
+    SecretsFilter: '$(certificate)'
+    RunAsPreJob: false
 - task: PowerShell@2
   inputs:
     failOnStderr: true
